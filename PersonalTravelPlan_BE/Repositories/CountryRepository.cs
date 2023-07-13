@@ -12,7 +12,7 @@ namespace PersonalTravelPlan_BE.Repositories {
         public IList<Country> GetCountries() {
             using (var session = NHibernateHelper.OpenSession()) {
                 var currencies = session.QueryOver<Country>()
-                                        //.Fetch(x => x.Places).Eager
+                                        .Fetch(x => x.Places).Eager
                                         .List();
                 return currencies;
             }
@@ -22,7 +22,7 @@ namespace PersonalTravelPlan_BE.Repositories {
             using (var session = NHibernateHelper.OpenSession()) {
                 Country currency = session.QueryOver<Country>()
                                           .Where(x => x.Id == id)
-                                          //.Fetch(x => x.Places).Eager
+                                          .Fetch(x => x.Places).Eager
                                           .SingleOrDefault<Country>();
                 return currency;
             }

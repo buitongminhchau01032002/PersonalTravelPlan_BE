@@ -42,7 +42,7 @@ namespace PersonalTravelPlan_BE.Models {
             });
             Set(x => x.Places, map => {
                 map.Table("JourneyPlace");
-                map.Cascade(Cascade.None);
+                map.Cascade(Cascade.All | Cascade.DeleteOrphans);
                 map.Key(k => k.Column("JourneyId"));
             }, rel => rel.ManyToMany(
                 p => p.Column("PlaceId")

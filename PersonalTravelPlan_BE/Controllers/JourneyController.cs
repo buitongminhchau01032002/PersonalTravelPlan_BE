@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PersonalTravelPlan_BE.Models;
 using PersonalTravelPlan_BE.Repositories;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
@@ -27,13 +28,23 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // GET api/<JourneyController>/5
         [HttpGet("{id}")]
-        public string Get(int id) {
-            return "value";
+        public ActionResult Get(int id) {
+            try {
+                Journey journey = _journeyRepository.GetJourneyById(id);
+                if (journey != null) {
+                    return Ok(journey);
+                } else {
+                    return NotFound();
+                }
+            } catch (Exception e) {
+                return StatusCode(500);
+            }
         }
 
         // POST api/<JourneyController>
         [HttpPost]
-        public void Post([FromBody] string value) {
+        public ActionResult Post(Journey journey) {
+            return CreatedAtAction(nameof(Get), new { id = 1 }, journey);
         }
 
         // PUT api/<JourneyController>/5

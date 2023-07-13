@@ -4,6 +4,7 @@ using PersonalTravelPlan_BE.Utils;
 namespace PersonalTravelPlan_BE.Repositories {
     public interface IJourneyRepository {
         IList<Journey> GetJourneys();
+        Journey GetJourneyById(int id);
     }
 
     public class JourneyRepository : IJourneyRepository {
@@ -15,6 +16,18 @@ namespace PersonalTravelPlan_BE.Repositories {
                                       .Fetch(x => x.Places).Eager
                                       .List();
                 return journeys;
+            }
+        }
+
+        public Journey GetJourneyById(int id) {
+            using (var session = NHibernateHelper.OpenSession()) {
+                var journey = session.QueryOver<Journey>()
+                                      .Where(x => x.Id == id)
+                                      .Fetch(x => x.Currency).Eager
+                                      .Fetch(x => x.Country).Eager.Fetch(x => x.Country.Places).Eager
+                                      .Fetch(x => x.Places).Eager
+                                      .SingleOrDefault<Journey>();
+                return journey;
             }
         }
     }
