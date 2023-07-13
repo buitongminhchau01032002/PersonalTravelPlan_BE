@@ -23,5 +23,10 @@ namespace PersonalTravelPlan_BE.Controllers {
             })
             .ToArray();
         }
+
+        [HttpPost]
+        public async Task<ActionResult<WeatherForecast>> Post(WeatherForecast weatherForecast) {
+            return CreatedAtAction(nameof(WeatherForecast), new {id = 2}, weatherForecast);
+        }
     }
 }
