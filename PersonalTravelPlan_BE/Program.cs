@@ -1,13 +1,19 @@
+using PersonalTravelPlan_BE.Repositories;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-
+builder.Services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
+builder.Services.AddSingleton<ICountryRepository, CountryRepository>();
+builder.Services.AddSingleton<IJourneyRepository, JourneyRepository>();
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+HibernatingRhinos.Profiler.Appender.NHibernate.NHibernateProfiler.Initialize();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment()) {
