@@ -30,6 +30,16 @@ namespace PersonalTravelPlan_BE.Repositories {
                 return journey;
             }
         }
+
+        public Journey CreateJourney(Journey journey) {
+            using (var session = NHibernateHelper.OpenSession()) {
+                using (var transaction =  session.BeginTransaction()) {
+                    session.Save(journey);
+                    transaction.Commit();
+                    return journey;
+                }
+            }
+        }
     }
 
 }

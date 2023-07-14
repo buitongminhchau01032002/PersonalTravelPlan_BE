@@ -6,10 +6,13 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
 builder.Services.AddSingleton<ICountryRepository, CountryRepository>();
 builder.Services.AddSingleton<IJourneyRepository, JourneyRepository>();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.UseDateOnlyTimeOnlyStringConverters())
+                .AddJsonOptions(options => options.UseDateOnlyTimeOnlyStringConverters());
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerGen(options => {
+    options.UseDateOnlyTimeOnlyStringConverters();
+});
 
 var app = builder.Build();
 

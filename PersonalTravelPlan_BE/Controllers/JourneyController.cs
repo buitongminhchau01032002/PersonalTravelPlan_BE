@@ -1,6 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using PersonalTravelPlan_BE.Dtos;
 using PersonalTravelPlan_BE.Models;
 using PersonalTravelPlan_BE.Repositories;
+using PersonalTravelPlan_BE.Utils;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -18,9 +20,13 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // GET: api/<JourneyController>
         [HttpGet]
-        public ActionResult Get() {
+        public ActionResult<IEnumerable<JourneyDto>> Get() {
             try {
-                return Ok(_journeyRepository.GetJourneys());
+                List<JourneyDto> journeys = _journeyRepository
+                    .GetJourneys()
+                    .Select(journey => journey.AsDto())
+                    .ToList();
+                return Ok(journeys);
             } catch (Exception e) {
                 return StatusCode(500);
             }
@@ -28,11 +34,11 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // GET api/<JourneyController>/5
         [HttpGet("{id}")]
-        public ActionResult Get(int id) {
+        public ActionResult<JourneyDto> Get(int id) {
             try {
                 Journey journey = _journeyRepository.GetJourneyById(id);
                 if (journey != null) {
-                    return Ok(journey);
+                    return Ok(journey.AsDto());
                 } else {
                     return NotFound();
                 }
@@ -43,8 +49,8 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // POST api/<JourneyController>
         [HttpPost]
-        public ActionResult Post(Journey journey) {
-            return CreatedAtAction(nameof(Get), new { id = 1 }, journey);
+        public ActionResult<JourneyDto> Post(CreateJourneyDto createJouney) {
+            return CreatedAtAction(nameof(Get), new { id = 1 }, new Journey());
         }
 
         // PUT api/<JourneyController>/5
