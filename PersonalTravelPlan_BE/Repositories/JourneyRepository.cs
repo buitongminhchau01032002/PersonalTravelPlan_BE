@@ -1,4 +1,5 @@
-﻿using PersonalTravelPlan_BE.Models;
+﻿using NHibernate;
+using PersonalTravelPlan_BE.Models;
 using PersonalTravelPlan_BE.Utils;
 
 namespace PersonalTravelPlan_BE.Repositories {
@@ -6,6 +7,8 @@ namespace PersonalTravelPlan_BE.Repositories {
         IList<Journey> GetJourneys();
         Journey GetJourneyById(int id);
         Journey CreateJourney(Journey journey);
+        Journey UpdateJourney(Journey journey);
+        public void DeleteJourney(int id);
     }
 
     public class JourneyRepository : IJourneyRepository {
@@ -41,6 +44,27 @@ namespace PersonalTravelPlan_BE.Repositories {
                 }
             }
         }
+
+        public Journey UpdateJourney(Journey journey) {
+            using (var session = NHibernateHelper.OpenSession()) {
+                using (var transaction = session.BeginTransaction()) {
+                    session.Update(journey);
+                    transaction.Commit();
+                    return journey;
+                }
+            }
+        }
+
+        public void DeleteJourney(int id) {
+            using (var session = NHibernateHelper.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    Journey journey = session.Get<Journey>(id);
+                    session.Delete(journey);
+                    transaction.Commit();
+                }
+            }
+        }
+
     }
 
 }

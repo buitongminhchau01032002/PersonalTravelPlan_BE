@@ -98,18 +98,60 @@ namespace PersonalTravelPlan_BE.Controllers {
             } catch (Exception e) {
                 return StatusCode(500);
             }
-
-
         }
 
         // PUT api/<JourneyController>/5
         [HttpPut("{id}")]
-        public void Put(int id, [FromBody] string value) {
+        public ActionResult<JourneyDto> Put(int id, CreateJourneyDto updateJourney) {
+            try {
+                // Get currency
+                Currency currency = _currencyRepository.GetCurrencyById(updateJourney.CurrencyId);
+                if (currency == null) {
+                    throw new Exception();
+                }
+
+                // Get country
+                Country country = _countryRepository.GetCountryById(updateJourney.CountryId);
+                if (country == null) {
+                    throw new Exception();
+                }
+
+                // Get places
+                IList<Place> places = _placeRepository.GetPlacesByIds(updateJourney.PlaceIds);
+
+                Journey journey = new Journey() {
+                    Id = id,
+                    Name = updateJourney.Name,
+                    Description = updateJourney.Description,
+                    FromDate = updateJourney.FromDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    ToDate = updateJourney.ToDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    DurationDay = updateJourney.DurationDay,
+                    DurationNight = updateJourney.DurationNight,
+                    Amount = updateJourney.Amount,
+                    Status = updateJourney.Status,
+                    ImageUrl = updateJourney.ImageUrl,
+                    Country = country,
+                    Currency = currency,
+                    Places = new HashSet<Place>(places)
+                };
+
+                journey = _journeyRepository.UpdateJourney(journey);
+
+                return Ok(journey.AsDto());
+            } catch (Exception e) {
+                return StatusCode(500);
+            }
         }
 
         // DELETE api/<JourneyController>/5
         [HttpDelete("{id}")]
-        public void Delete(int id) {
+        public ActionResult Delete(int id) {
+            try {
+                _journeyRepository.DeleteJourney(id);
+                return Ok();
+            } catch (Exception e) {
+                return StatusCode(500);
+            }
         }
     }
 }
