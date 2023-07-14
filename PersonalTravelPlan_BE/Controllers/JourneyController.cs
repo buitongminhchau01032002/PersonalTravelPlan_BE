@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using NHibernate.Engine;
 using PersonalTravelPlan_BE.Dtos;
 using PersonalTravelPlan_BE.Models;
 using PersonalTravelPlan_BE.Repositories;
@@ -12,10 +13,20 @@ namespace PersonalTravelPlan_BE.Controllers {
     public class JourneyController : ControllerBase {
 
         private readonly IJourneyRepository _journeyRepository;
+        private readonly IPlaceRepository _placeRepository;
+        private readonly ICurrencyRepository _currencyRepository;
+        private readonly ICountryRepository _countryRepository;
 
-        public JourneyController(IJourneyRepository journeyRepository)
+        public JourneyController(
+            IJourneyRepository journeyRepository, 
+            IPlaceRepository placeRepository, 
+            ICurrencyRepository currencyRepository,
+            ICountryRepository countryRepository)
         {
             _journeyRepository = journeyRepository;
+            _placeRepository = placeRepository;
+            _currencyRepository = currencyRepository;
+            _countryRepository = countryRepository;
         }
 
         // GET: api/<JourneyController>
@@ -50,7 +61,45 @@ namespace PersonalTravelPlan_BE.Controllers {
         // POST api/<JourneyController>
         [HttpPost]
         public ActionResult<JourneyDto> Post(CreateJourneyDto createJouney) {
-            return CreatedAtAction(nameof(Get), new { id = 1 }, new Journey());
+            try {
+                // Get currency
+                Currency currency = _currencyRepository.GetCurrencyById(createJouney.CurrencyId);
+                if (currency == null) {
+                    throw new Exception();
+                }
+
+                // Get country
+                Country country = _countryRepository.GetCountryById(createJouney.CountryId);
+                if (country == null) {
+                    throw new Exception();
+                }
+
+                // Get places
+                IList<Place> places = _placeRepository.GetPlacesByIds(createJouney.PlaceIds);
+
+                Journey journey = new Journey() {
+                    Name = createJouney.Name,
+                    Description = createJouney.Description,
+                    FromDate = createJouney.FromDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    ToDate = createJouney.ToDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    DurationDay = createJouney.DurationDay,
+                    DurationNight = createJouney.DurationNight,
+                    Amount = createJouney.Amount,
+                    Status = createJouney.Status,
+                    ImageUrl = createJouney.ImageUrl,
+                    Country = country,
+                    Currency = currency,
+                    Places = new HashSet<Place>(places)
+                };
+
+                journey = _journeyRepository.CreateJourney(journey);
+
+                return CreatedAtAction(nameof(Get), new { id = 1 }, journey.AsDto());
+            } catch (Exception e) {
+                return StatusCode(500);
+            }
+
+
         }
 
         // PUT api/<JourneyController>/5

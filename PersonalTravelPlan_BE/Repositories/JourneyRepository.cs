@@ -5,6 +5,7 @@ namespace PersonalTravelPlan_BE.Repositories {
     public interface IJourneyRepository {
         IList<Journey> GetJourneys();
         Journey GetJourneyById(int id);
+        Journey CreateJourney(Journey journey);
     }
 
     public class JourneyRepository : IJourneyRepository {

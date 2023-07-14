@@ -11,8 +11,8 @@ namespace PersonalTravelPlan_BE.Dtos {
         public int Amount { get; set; }
         public string? Status { get; set; }
         public string? ImageUrl { get; set; }
-        public int? CountryId { get; set; }
-        public int? CurrencyId { get; set; }
-        public ISet<int> PlaceIds { get; set; } = new HashSet<int>();
+        public int CountryId { get; set; }
+        public int CurrencyId { get; set; }
+        public IList<int> PlaceIds { get; set; } = new List<int>();
     }
 }
