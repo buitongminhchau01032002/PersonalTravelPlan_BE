@@ -2,7 +2,7 @@
 using System.ComponentModel.DataAnnotations;
 
 namespace PersonalTravelPlan_BE.Dtos {
-    public record CreateJourneyDto {
+    public record UpdateJurneyDto {
         [Required]
         public string? Name { get; set; }
         [Required]

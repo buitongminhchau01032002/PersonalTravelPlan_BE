@@ -6,11 +6,11 @@ namespace PersonalTravelPlan_BE.Models {
         public virtual int Id { get; set; }
         public virtual string? Name { get; set; }
         public virtual string? Description { get; set;}
-        public virtual DateTime FromDate { get; set; }
-        public virtual DateTime ToDate { get; set; }
-        public virtual int DurationDay { get; set; }
-        public virtual int DurationNight { get; set;}
-        public virtual int Amount { get; set; }
+        public virtual DateTime StartDate { get; set; }
+        public virtual DateTime? EndDate { get; set; }
+        public virtual int? DurationDay { get; set; }
+        public virtual int? DurationNight { get; set;}
+        public virtual int? Amount { get; set; }
         public virtual string? Status { get; set; }
         public virtual string? ImageUrl { get; set; }
         public virtual Country? Country { get; set; }
@@ -25,8 +25,8 @@ namespace PersonalTravelPlan_BE.Models {
             });
             Property(x => x.Name);
             Property(x => x.Description);
-            Property(x => x.FromDate);
-            Property(x => x.ToDate);
+            Property(x => x.StartDate);
+            Property(x => x.EndDate);
             Property(x => x.DurationDay);
             Property(x => x.DurationNight);
             Property(x => x.Amount);
@@ -38,7 +38,7 @@ namespace PersonalTravelPlan_BE.Models {
             });
             ManyToOne(x => x.Currency, map => {
                 map.Column("CurrencyId");
-                map.NotNullable(true);
+                map.NotNullable(false);
             });
             Set(x => x.Places, map => {
                 map.Table("JourneyPlace");

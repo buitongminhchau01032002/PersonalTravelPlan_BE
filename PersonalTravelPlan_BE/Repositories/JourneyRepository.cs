@@ -1,27 +1,43 @@
 ﻿using NHibernate;
 using PersonalTravelPlan_BE.Models;
+using PersonalTravelPlan_BE.Queries;
 using PersonalTravelPlan_BE.Utils;
 
 namespace PersonalTravelPlan_BE.Repositories {
     public interface IJourneyRepository {
-        IList<Journey> GetJourneys();
+        IList<Journey> GetJourneys(PaginationQuery paginationQuery);
         Journey GetJourneyById(int id);
+        int GetJourneyCount();
         Journey CreateJourney(Journey journey);
         Journey UpdateJourney(Journey journey);
         public void DeleteJourney(int id);
     }
 
     public class JourneyRepository : IJourneyRepository {
-        public IList<Journey> GetJourneys() {
+        public IList<Journey> GetJourneys(PaginationQuery paginationQuery) {
+            int _page = paginationQuery.page ?? 1;
+            int _pageSize = paginationQuery.pageSize ?? 5;
             using (var session = NHibernateHelper.OpenSession()) {
                 var journeys = session.QueryOver<Journey>()
                                       .Fetch(x => x.Currency).Eager
                                       .Fetch(x => x.Country).Eager.Fetch(x => x.Country.Places).Eager
                                       .Fetch(x => x.Places).Eager
-                                      .List();
+                                      .Future<Journey>()
+                                      .Distinct()
+                                      .Skip((_page-1) * _pageSize)
+                                      .Take(_pageSize)
+                                      .ToList();
                 return journeys;
             }
         }
+
+        public int GetJourneyCount() {
+            using (var session = NHibernateHelper.OpenSession()) {
+                int count = session.QueryOver<Journey>().RowCount();
+                return count;
+            }
+        }
+
 
         public Journey GetJourneyById(int id) {
             using (var session = NHibernateHelper.OpenSession()) {

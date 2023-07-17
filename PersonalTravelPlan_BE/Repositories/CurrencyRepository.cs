@@ -4,7 +4,7 @@ using PersonalTravelPlan_BE.Utils;
 namespace PersonalTravelPlan_BE.Repositories {
     public interface ICurrencyRepository {
         IList<Currency> GetCurrencies();
-        Currency GetCurrencyById(int id);
+        Currency GetCurrencyById(int? id);
     }
 
     public class CurrencyRepository : ICurrencyRepository {
@@ -15,7 +15,7 @@ namespace PersonalTravelPlan_BE.Repositories {
             }
         }
 
-        public Currency GetCurrencyById(int id) {
+        public Currency GetCurrencyById(int? id) {
             using (var session = NHibernateHelper.OpenSession()) {
                 Currency currency = session.Get<Currency>(id);
                 return currency;

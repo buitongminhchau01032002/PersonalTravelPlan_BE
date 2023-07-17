@@ -2,6 +2,7 @@
 using NHibernate.Engine;
 using PersonalTravelPlan_BE.Dtos;
 using PersonalTravelPlan_BE.Models;
+using PersonalTravelPlan_BE.Queries;
 using PersonalTravelPlan_BE.Repositories;
 using PersonalTravelPlan_BE.Utils;
 
@@ -31,13 +32,21 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // GET: api/<JourneyController>
         [HttpGet]
-        public ActionResult<IEnumerable<JourneyDto>> Get() {
+        public ActionResult<IEnumerable<JourneyDto>> Get([FromQuery]PaginationQuery paginationQuery) {
             try {
                 List<JourneyDto> journeys = _journeyRepository
-                    .GetJourneys()
+                    .GetJourneys(paginationQuery)
                     .Select(journey => journey.AsDto())
                     .ToList();
-                return Ok(journeys);
+                int journeyCount = _journeyRepository.GetJourneyCount();
+                JourneyListDtos journeyListDtos = new JourneyListDtos() { 
+                    page = paginationQuery.page ?? 1, 
+                    pageSize = paginationQuery.pageSize ?? 5, 
+                    total = journeyCount,
+                    totalPage = (int)Math.Ceiling((float)journeyCount / (paginationQuery.pageSize ?? 5)),
+                    data = journeys
+                };
+                return Ok(journeyListDtos);
             } catch (Exception e) {
                 return StatusCode(500);
             }
@@ -63,15 +72,46 @@ namespace PersonalTravelPlan_BE.Controllers {
         public ActionResult<JourneyDto> Post(CreateJourneyDto createJouney) {
             try {
                 // Get currency
-                Currency currency = _currencyRepository.GetCurrencyById(createJouney.CurrencyId);
-                if (currency == null) {
-                    throw new Exception();
+                Currency? currency = null;
+                if (createJouney.CurrencyId != null) {
+                    currency = _currencyRepository.GetCurrencyById(createJouney.CurrencyId);
+                    if (currency == null) {
+                        return BadRequest();
+                    }
                 }
 
                 // Get country
                 Country country = _countryRepository.GetCountryById(createJouney.CountryId);
                 if (country == null) {
-                    throw new Exception();
+                    return BadRequest();
+                }
+
+                // Validate end date
+                if (createJouney.EndDate != null && createJouney.EndDate <= createJouney.StartDate) {
+                    return BadRequest();
+                }
+
+                // Validate duration
+                if (createJouney.DurationDay != null) {
+                    if (createJouney.DurationDay <= 0) {
+                        return BadRequest();
+                    }
+                    if (createJouney.EndDate != null && createJouney.DurationDay > createJouney.EndDate?.DayNumber - createJouney.StartDate.DayNumber + 1) {
+                        return BadRequest();
+                    }
+                }
+                if (createJouney.DurationNight != null) {
+                    if (createJouney.DurationNight <= 0) {
+                        return BadRequest();
+                    }
+                    if (createJouney.EndDate != null && createJouney.DurationNight > createJouney.EndDate?.DayNumber - createJouney.StartDate.DayNumber + 1) {
+                        return BadRequest();
+                    }
+                }
+                if (createJouney.DurationDay != null && createJouney.DurationNight != null) {
+                    if (Math.Abs((int)createJouney.DurationDay - (int)createJouney.DurationNight) > 1) {
+                        return BadRequest();
+                    }
                 }
 
                 // Get places
@@ -80,8 +120,8 @@ namespace PersonalTravelPlan_BE.Controllers {
                 Journey journey = new Journey() {
                     Name = createJouney.Name,
                     Description = createJouney.Description,
-                    FromDate = createJouney.FromDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
-                    ToDate = createJouney.ToDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    StartDate = createJouney.StartDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    EndDate = createJouney.EndDate == null ? null : createJouney.EndDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
                     DurationDay = createJouney.DurationDay,
                     DurationNight = createJouney.DurationNight,
                     Amount = createJouney.Amount,
@@ -102,7 +142,7 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // PUT api/<JourneyController>/5
         [HttpPut("{id}")]
-        public ActionResult<JourneyDto> Put(int id, CreateJourneyDto updateJourney) {
+        public ActionResult<JourneyDto> Put(int id, UpdateJurneyDto updateJourney) {
             try {
                 // Get currency
                 Currency currency = _currencyRepository.GetCurrencyById(updateJourney.CurrencyId);
@@ -123,8 +163,8 @@ namespace PersonalTravelPlan_BE.Controllers {
                     Id = id,
                     Name = updateJourney.Name,
                     Description = updateJourney.Description,
-                    FromDate = updateJourney.FromDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
-                    ToDate = updateJourney.ToDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    StartDate = updateJourney.StartDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    EndDate = (DateTime)(updateJourney.EndDate?.ToDateTime(TimeOnly.Parse("00:00 AM"))),
                     DurationDay = updateJourney.DurationDay,
                     DurationNight = updateJourney.DurationNight,
                     Amount = updateJourney.Amount,

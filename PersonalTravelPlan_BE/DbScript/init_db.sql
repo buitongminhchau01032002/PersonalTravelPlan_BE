@@ -5,7 +5,7 @@ DROP TABLE IF EXISTS JourneyPlace, Journey, Place, Country, Currency;
 -- CURRENCY
 CREATE TABLE [dbo].[Currency] (
 	[Id] INT NOT NULL IDENTITY(1, 1),
-	[Name] NVARCHAR(100),
+	[Name] NVARCHAR(100) NOT NULL,
 	PRIMARY KEY (Id)
 );
 
@@ -17,8 +17,8 @@ SET IDENTITY_INSERT Currency OFF;
 -- COUNTRY
 CREATE TABLE [dbo].[Country] (
 	[Id] INT NOT NULL IDENTITY(1, 1),
-	[Name] NVARCHAR(100),
-	[Code] NVARCHAR(5),
+	[Name] NVARCHAR(100) NOT NULL,
+	[Code] NVARCHAR(5) NOT NULL,
 	PRIMARY KEY (Id)
 )
 
@@ -30,8 +30,8 @@ SET IDENTITY_INSERT Country OFF;
 -- PLACE
 CREATE TABLE [dbo].[Place] (
 	[Id] INT NOT NULL IDENTITY(1, 1),
-	[Name] NVARCHAR(100),
-	[CountryId] INT,
+	[Name] NVARCHAR(100) NOT NULL,
+	[CountryId] INT NOT NULL,
 	PRIMARY KEY (Id)
 )
 ALTER TABLE Place ADD FOREIGN KEY ([CountryId]) REFERENCES Country([Id]);
@@ -47,23 +47,23 @@ SET IDENTITY_INSERT Place OFF;
 -- JOURNEY
 CREATE TABLE [dbo].[Journey] (
 	[Id] INT NOT NULL IDENTITY(1, 1),
-	[Name] NVARCHAR(100),
-	[Description] NVARCHAR(1024),
-	[FromDate] Date,
-	[ToDate] Date,
+	[Name] NVARCHAR(100) NOT NULL,
+	[Description] NVARCHAR(1024) NOT NULL,
+	[StartDate] Date NOT NULL,
+	[EndDate] Date,
 	[DurationDay] INT,
 	[DurationNight] INT,
 	[Amount] INT,
-	[Status] NVARCHAR(100),
+	[Status] NVARCHAR(100) NOT NULL,
 	[ImageUrl] NVARCHAR(500),
-	[CountryId] INT,
+	[CountryId] INT NOT NULL,
 	[CurrencyId] INT,
 	PRIMARY KEY (Id)
 )
 ALTER TABLE Place ADD FOREIGN KEY ([CountryId]) REFERENCES Country([Id]);
 
 SET IDENTITY_INSERT Journey ON;
-INSERT INTO Journey([Id], [Name], [Description], [FromDate], [ToDate], [DurationDay], [DurationNight], [Amount], [Status], [ImageUrl], [CountryId], [CurrencyId])
+INSERT INTO Journey([Id], [Name], [Description], [StartDate], [EndDate], [DurationDay], [DurationNight], [Amount], [Status], [ImageUrl], [CountryId], [CurrencyId])
 VALUES
 (	1,
 	'Personalized Ha Noi Adventure: A Journey of Discovery',
