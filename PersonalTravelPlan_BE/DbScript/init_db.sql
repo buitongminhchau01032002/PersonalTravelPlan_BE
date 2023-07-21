@@ -24,7 +24,7 @@ CREATE TABLE [dbo].[Country] (
 
 SET IDENTITY_INSERT Country ON;
 INSERT INTO Country([Id], [Name], [Code])
-VALUES (1, 'Vietnam', 'vi'), (2, 'England', 'en'), (3, 'United State', 'us');
+VALUES (1, 'Vietnam', 'vn'), (2, 'England', 'en'), (3, 'United State', 'us');
 SET IDENTITY_INSERT Country OFF;
 
 -- PLACE

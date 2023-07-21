@@ -28,6 +28,16 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         }
 
+        [HttpGet("GetByCountryId/{countryId}")]
+        public ActionResult<IEnumerable<Place>> GetByCountryId(int countryId) {
+            try {
+                var places = _placeRepository.GetPlacesByCountryId(countryId);
+                return Ok(places);
+            } catch (Exception e) {
+                return StatusCode(500);
+            }
+        }
+
         //// GET: api/<PlaceController>
         //[HttpGet]
         //public IEnumerable<string> Get() {

@@ -1,8 +1,17 @@
+using Microsoft.Net.Http.Headers;
 using PersonalTravelPlan_BE.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddCors(options => {
+    options.AddDefaultPolicy(
+        policy => {
+            policy.WithOrigins("*")
+                  .WithMethods("GET", "POST", "PUT", "DELETE")
+                  .WithHeaders(HeaderNames.ContentType, "application/json");
+        });
+});
 builder.Services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
 builder.Services.AddSingleton<ICountryRepository, CountryRepository>();
 builder.Services.AddSingleton<IJourneyRepository, JourneyRepository>();
@@ -24,6 +33,8 @@ if (app.Environment.IsDevelopment()) {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.UseCors();
 
 app.UseHttpsRedirection();
 

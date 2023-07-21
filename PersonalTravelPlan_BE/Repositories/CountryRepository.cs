@@ -13,7 +13,9 @@ namespace PersonalTravelPlan_BE.Repositories {
             using (var session = NHibernateHelper.OpenSession()) {
                 var currencies = session.QueryOver<Country>()
                                         .Fetch(x => x.Places).Eager
-                                        .List();
+                                        .Future<Country>()
+                                        .Distinct()
+                                        .ToList();
                 return currencies;
             }
         }

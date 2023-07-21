@@ -1,5 +1,4 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NHibernate.Engine;
 using PersonalTravelPlan_BE.Dtos;
 using PersonalTravelPlan_BE.Models;
 using PersonalTravelPlan_BE.Queries;
@@ -32,20 +31,30 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // GET: api/<JourneyController>
         [HttpGet]
-        public ActionResult<IEnumerable<JourneyDto>> Get([FromQuery]PaginationQuery paginationQuery) {
+        public ActionResult<IEnumerable<JourneyDto>> Get([FromQuery]PaginationQuery paginationQuery, [FromQuery]FilterQuery filterQuery) {
             try {
+
+                // get from db
                 List<JourneyDto> journeys = _journeyRepository
-                    .GetJourneys(paginationQuery)
+                    .GetJourneys(paginationQuery, filterQuery)
                     .Select(journey => journey.AsDto())
                     .ToList();
-                int journeyCount = _journeyRepository.GetJourneyCount();
+
+                // pagination
+                int _total = journeys.Count;
+                int _page = paginationQuery.page ?? 1;
+                int _pageSize = paginationQuery.pageSize ?? 5;
+                journeys = journeys.Skip((_page - 1) * _pageSize).Take(_pageSize).ToList();
+
+                // transfrom data to response
                 JourneyListDtos journeyListDtos = new JourneyListDtos() { 
                     page = paginationQuery.page ?? 1, 
                     pageSize = paginationQuery.pageSize ?? 5, 
-                    total = journeyCount,
-                    totalPage = (int)Math.Ceiling((float)journeyCount / (paginationQuery.pageSize ?? 5)),
+                    total = _total,
+                    totalPage = (int)Math.Ceiling((float)_total / (paginationQuery.pageSize ?? 5)),
                     data = journeys
                 };
+
                 return Ok(journeyListDtos);
             } catch (Exception e) {
                 return StatusCode(500);
