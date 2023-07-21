@@ -78,64 +78,64 @@ namespace PersonalTravelPlan_BE.Controllers {
 
         // POST api/<JourneyController>
         [HttpPost]
-        public ActionResult<JourneyDto> Post(CreateJourneyDto createJouney) {
+        public ActionResult<JourneyDto> Post(CreateJourneyDto createJourney) {
             try {
                 // Get currency
                 Currency? currency = null;
-                if (createJouney.CurrencyId != null) {
-                    currency = _currencyRepository.GetCurrencyById(createJouney.CurrencyId);
+                if (createJourney.CurrencyId != null) {
+                    currency = _currencyRepository.GetCurrencyById(createJourney.CurrencyId);
                     if (currency == null) {
                         return BadRequest();
                     }
                 }
 
                 // Get country
-                Country country = _countryRepository.GetCountryById(createJouney.CountryId);
+                Country country = _countryRepository.GetCountryById(createJourney.CountryId);
                 if (country == null) {
                     return BadRequest();
                 }
 
                 // Validate end date
-                if (createJouney.EndDate != null && createJouney.EndDate <= createJouney.StartDate) {
+                if (createJourney.EndDate != null && createJourney.EndDate <= createJourney.StartDate) {
                     return BadRequest();
                 }
 
                 // Validate duration
-                if (createJouney.DurationDay != null) {
-                    if (createJouney.DurationDay <= 0) {
+                if (createJourney.DurationDay != null) {
+                    if (createJourney.DurationDay <= 0) {
                         return BadRequest();
                     }
-                    if (createJouney.EndDate != null && createJouney.DurationDay > createJouney.EndDate?.DayNumber - createJouney.StartDate?.DayNumber + 1) {
-                        return BadRequest();
-                    }
-                }
-                if (createJouney.DurationNight != null) {
-                    if (createJouney.DurationNight <= 0) {
-                        return BadRequest();
-                    }
-                    if (createJouney.EndDate != null && createJouney.DurationNight > createJouney.EndDate?.DayNumber - createJouney.StartDate?.DayNumber + 1) {
+                    if (createJourney.EndDate != null && createJourney.DurationDay > createJourney.EndDate?.DayNumber - createJourney.StartDate?.DayNumber + 1) {
                         return BadRequest();
                     }
                 }
-                if (createJouney.DurationDay != null && createJouney.DurationNight != null) {
-                    if (Math.Abs((int)createJouney.DurationDay - (int)createJouney.DurationNight) > 1) {
+                if (createJourney.DurationNight != null) {
+                    if (createJourney.DurationNight <= 0) {
+                        return BadRequest();
+                    }
+                    if (createJourney.EndDate != null && createJourney.DurationNight > createJourney.EndDate?.DayNumber - createJourney.StartDate?.DayNumber + 1) {
+                        return BadRequest();
+                    }
+                }
+                if (createJourney.DurationDay != null && createJourney.DurationNight != null) {
+                    if (Math.Abs((int)createJourney.DurationDay - (int)createJourney.DurationNight) > 1) {
                         return BadRequest();
                     }
                 }
 
                 // Get places
-                IList<Place> places = _placeRepository.GetPlacesByIds(createJouney.PlaceIds);
+                IList<Place> places = _placeRepository.GetPlacesByIds(createJourney.PlaceIds);
 
                 Journey journey = new Journey() {
-                    Name = createJouney.Name,
-                    Description = createJouney.Description,
-                    StartDate = createJouney.StartDate == null ? null : createJouney.StartDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
-                    EndDate = createJouney.EndDate == null ? null : createJouney.EndDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
-                    DurationDay = createJouney.DurationDay,
-                    DurationNight = createJouney.DurationNight,
-                    Amount = createJouney.Amount,
-                    Status = createJouney.Status,
-                    ImageUrl = createJouney.ImageUrl,
+                    Name = createJourney.Name,
+                    Description = createJourney.Description,
+                    StartDate = createJourney.StartDate == null ? null : createJourney.StartDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    EndDate = createJourney.EndDate == null ? null : createJourney.EndDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    DurationDay = createJourney.DurationDay,
+                    DurationNight = createJourney.DurationNight,
+                    Amount = createJourney.Amount,
+                    Status = createJourney.Status,
+                    ImageUrl = createJourney.ImageUrl,
                     Country = country,
                     Currency = currency,
                     Places = new HashSet<Place>(places)
