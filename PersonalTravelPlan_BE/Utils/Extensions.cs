@@ -8,7 +8,7 @@ namespace PersonalTravelPlan_BE.Utils {
                 Id = journey.Id,
                 Name = journey.Name,
                 Description = journey.Description,
-                StartDate = DateOnly.FromDateTime(journey.StartDate),
+                StartDate = journey.StartDate == null ? null : DateOnly.FromDateTime((DateTime)journey.StartDate),
                 EndDate = journey.EndDate == null ? null : DateOnly.FromDateTime((DateTime)journey.EndDate),
                 DurationDay = journey.DurationDay,
                 DurationNight = journey.DurationNight,

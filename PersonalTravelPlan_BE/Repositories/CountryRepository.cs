@@ -5,7 +5,7 @@ using PersonalTravelPlan_BE.Utils;
 namespace PersonalTravelPlan_BE.Repositories {
     public interface ICountryRepository {
         IList<Country> GetCountries();
-        Country GetCountryById(int id);
+        Country? GetCountryById(int? id);
     }
 
     public class CountryRepository : ICountryRepository {
@@ -20,7 +20,10 @@ namespace PersonalTravelPlan_BE.Repositories {
             }
         }
 
-        public Country GetCountryById(int id) {
+        public Country? GetCountryById(int? id) {
+            if (id == null) {
+                return null;
+            }
             using (var session = NHibernateHelper.OpenSession()) {
                 Country currency = session.QueryOver<Country>()
                                           .Where(x => x.Id == id)

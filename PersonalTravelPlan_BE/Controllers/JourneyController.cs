@@ -105,7 +105,7 @@ namespace PersonalTravelPlan_BE.Controllers {
                     if (createJouney.DurationDay <= 0) {
                         return BadRequest();
                     }
-                    if (createJouney.EndDate != null && createJouney.DurationDay > createJouney.EndDate?.DayNumber - createJouney.StartDate.DayNumber + 1) {
+                    if (createJouney.EndDate != null && createJouney.DurationDay > createJouney.EndDate?.DayNumber - createJouney.StartDate?.DayNumber + 1) {
                         return BadRequest();
                     }
                 }
@@ -113,7 +113,7 @@ namespace PersonalTravelPlan_BE.Controllers {
                     if (createJouney.DurationNight <= 0) {
                         return BadRequest();
                     }
-                    if (createJouney.EndDate != null && createJouney.DurationNight > createJouney.EndDate?.DayNumber - createJouney.StartDate.DayNumber + 1) {
+                    if (createJouney.EndDate != null && createJouney.DurationNight > createJouney.EndDate?.DayNumber - createJouney.StartDate?.DayNumber + 1) {
                         return BadRequest();
                     }
                 }
@@ -129,7 +129,7 @@ namespace PersonalTravelPlan_BE.Controllers {
                 Journey journey = new Journey() {
                     Name = createJouney.Name,
                     Description = createJouney.Description,
-                    StartDate = createJouney.StartDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    StartDate = createJouney.StartDate == null ? null : createJouney.StartDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
                     EndDate = createJouney.EndDate == null ? null : createJouney.EndDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
                     DurationDay = createJouney.DurationDay,
                     DurationNight = createJouney.DurationNight,

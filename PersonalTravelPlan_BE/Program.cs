@@ -9,7 +9,7 @@ builder.Services.AddCors(options => {
         policy => {
             policy.WithOrigins("*")
                   .WithMethods("GET", "POST", "PUT", "DELETE")
-                  .WithHeaders(HeaderNames.ContentType, "application/json");
+                  .WithHeaders(HeaderNames.ContentType, HeaderNames.Accept);
         });
 });
 builder.Services.AddSingleton<ICurrencyRepository, CurrencyRepository>();

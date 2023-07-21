@@ -6,7 +6,7 @@ namespace PersonalTravelPlan_BE.Models {
         public virtual int Id { get; set; }
         public virtual string? Name { get; set; }
         public virtual string? Description { get; set;}
-        public virtual DateTime StartDate { get; set; }
+        public virtual DateTime? StartDate { get; set; }
         public virtual DateTime? EndDate { get; set; }
         public virtual int? DurationDay { get; set; }
         public virtual int? DurationNight { get; set;}

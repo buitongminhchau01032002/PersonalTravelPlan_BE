@@ -8,7 +8,7 @@ namespace PersonalTravelPlan_BE.Dtos {
         [Required]
         public string? Description { get; set; }
         [Required]
-        public DateOnly StartDate { get; set; }
+        public DateOnly? StartDate { get; set; }
         public DateOnly? EndDate { get; set; }
         public int? DurationDay { get; set; }
         public int? DurationNight { get; set; }
@@ -19,7 +19,7 @@ namespace PersonalTravelPlan_BE.Dtos {
         public string? Status { get; set; }
         public string? ImageUrl { get; set; }
         [Required]
-        public int CountryId { get; set; }
+        public int? CountryId { get; set; }
         public int? CurrencyId { get; set; }
         [Required]
         [MinLength(1)]
