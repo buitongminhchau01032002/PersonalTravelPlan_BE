@@ -15,7 +15,7 @@ namespace PersonalTravelPlan_BE.Models {
         public virtual string? ImageUrl { get; set; }
         public virtual Country? Country { get; set; }
         public virtual Currency? Currency { get; set; }
-        public virtual ISet<Place> Places { get; set; } = new HashSet<Place>();
+        public virtual ISet<Place>? Places { get; set; } = new HashSet<Place>();
     }
 
     public class JourneyMap: ClassMapping<Journey> {

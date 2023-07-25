@@ -124,7 +124,10 @@ namespace PersonalTravelPlan_BE.Controllers {
                 }
 
                 // Get places
-                IList<Place> places = _placeRepository.GetPlacesByIds(createJourney.PlaceIds);
+                IList<Place>? places = null;
+                if (createJourney.PlaceIds != null) {
+                    places = _placeRepository.GetPlacesByIds(createJourney.PlaceIds);
+                }
 
                 Journey journey = new Journey() {
                     Name = createJourney.Name,
@@ -138,7 +141,7 @@ namespace PersonalTravelPlan_BE.Controllers {
                     ImageUrl = createJourney.ImageUrl,
                     Country = country,
                     Currency = currency,
-                    Places = new HashSet<Place>(places)
+                    Places = places == null ? null : new HashSet<Place>(places)
                 };
 
                 journey = _journeyRepository.CreateJourney(journey);
@@ -166,7 +169,12 @@ namespace PersonalTravelPlan_BE.Controllers {
                 }
 
                 // Get places
-                IList<Place> places = _placeRepository.GetPlacesByIds(updateJourney.PlaceIds);
+                IList<Place>? places = null;
+                if (updateJourney.PlaceIds != null) {
+                    places = _placeRepository.GetPlacesByIds(updateJourney.PlaceIds);
+                }
+
+
 
                 Journey journey = new Journey() {
                     Id = id,
@@ -181,7 +189,7 @@ namespace PersonalTravelPlan_BE.Controllers {
                     ImageUrl = updateJourney.ImageUrl,
                     Country = country,
                     Currency = currency,
-                    Places = new HashSet<Place>(places)
+                    Places = places == null ? null : new HashSet<Place>(places)
                 };
 
                 journey = _journeyRepository.UpdateJourney(journey);
@@ -197,6 +205,17 @@ namespace PersonalTravelPlan_BE.Controllers {
         public ActionResult Delete(int id) {
             try {
                 _journeyRepository.DeleteJourney(id);
+                return Ok();
+            } catch (Exception e) {
+                return StatusCode(500);
+            }
+        }
+
+        // DELETE api/<JourneyController>/5
+        [HttpDelete("many")]
+        public ActionResult DeleteMany([FromBody] List<int> ids) {
+            try {
+                _journeyRepository.DeleteManyJourney(ids);
                 return Ok();
             } catch (Exception e) {
                 return StatusCode(500);

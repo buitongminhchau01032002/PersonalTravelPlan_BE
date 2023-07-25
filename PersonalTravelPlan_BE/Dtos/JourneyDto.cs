@@ -21,6 +21,6 @@ namespace PersonalTravelPlan_BE.Dtos {
         public string? ImageUrl { get; set; }
         public CountryInJourneyDto? Country { get; set; }
         public Currency? Currency { get; set; }
-        public ISet<Place> Places { get; set; } = new HashSet<Place>();
+        public ISet<Place>? Places { get; set; } = new HashSet<Place>();
     }
 }

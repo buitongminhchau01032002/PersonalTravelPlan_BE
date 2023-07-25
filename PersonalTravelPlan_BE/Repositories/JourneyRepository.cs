@@ -11,7 +11,8 @@ namespace PersonalTravelPlan_BE.Repositories {
         //int GetJourneyCount();
         Journey CreateJourney(Journey journey);
         Journey UpdateJourney(Journey journey);
-        public void DeleteJourney(int id);
+        void DeleteJourney(int id);
+        void DeleteManyJourney(List<int> ids);
     }
 
     public class JourneyRepository : IJourneyRepository {
@@ -113,6 +114,20 @@ namespace PersonalTravelPlan_BE.Repositories {
                 using (ITransaction transaction = session.BeginTransaction()) {
                     Journey journey = session.Get<Journey>(id);
                     session.Delete(journey);
+                    transaction.Commit();
+                }
+            }
+        }
+
+        public void DeleteManyJourney(List<int> ids) {
+            using (var session = NHibernateHelper.OpenSession()) {
+                using (ITransaction transaction = session.BeginTransaction()) {
+                    session.CreateQuery("DELETE JourneyPlace jp WHERE jp.JourneyId IN (:idList)")
+                        .SetParameterList("idList", ids)
+                        .ExecuteUpdate();
+                    session.CreateQuery("DELETE Journey journey WHERE journey.Id IN (:idList)")
+                        .SetParameterList("idList", ids)
+                        .ExecuteUpdate();
                     transaction.Commit();
                 }
             }
