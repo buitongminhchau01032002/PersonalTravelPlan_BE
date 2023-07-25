@@ -157,15 +157,46 @@ namespace PersonalTravelPlan_BE.Controllers {
         public ActionResult<JourneyDto> Put(int id, UpdateJurneyDto updateJourney) {
             try {
                 // Get currency
-                Currency currency = _currencyRepository.GetCurrencyById(updateJourney.CurrencyId);
-                if (currency == null) {
-                    throw new Exception();
+                Currency? currency = null;
+                if (updateJourney.CurrencyId != null) {
+                    currency = _currencyRepository.GetCurrencyById(updateJourney.CurrencyId);
+                    if (currency == null) {
+                        return BadRequest();
+                    }
                 }
 
                 // Get country
                 Country country = _countryRepository.GetCountryById(updateJourney.CountryId);
                 if (country == null) {
-                    throw new Exception();
+                    return BadRequest();
+                }
+
+                // Validate end date
+                if (updateJourney.EndDate != null && updateJourney.EndDate <= updateJourney.StartDate) {
+                    return BadRequest();
+                }
+
+                // Validate duration
+                if (updateJourney.DurationDay != null) {
+                    if (updateJourney.DurationDay <= 0) {
+                        return BadRequest();
+                    }
+                    if (updateJourney.EndDate != null && updateJourney.DurationDay > updateJourney.EndDate?.DayNumber - updateJourney.StartDate?.DayNumber + 1) {
+                        return BadRequest();
+                    }
+                }
+                if (updateJourney.DurationNight != null) {
+                    if (updateJourney.DurationNight <= 0) {
+                        return BadRequest();
+                    }
+                    if (updateJourney.EndDate != null && updateJourney.DurationNight > updateJourney.EndDate?.DayNumber - updateJourney.StartDate?.DayNumber + 1) {
+                        return BadRequest();
+                    }
+                }
+                if (updateJourney.DurationDay != null && updateJourney.DurationNight != null) {
+                    if (Math.Abs((int)updateJourney.DurationDay - (int)updateJourney.DurationNight) > 1) {
+                        return BadRequest();
+                    }
                 }
 
                 // Get places
@@ -180,8 +211,8 @@ namespace PersonalTravelPlan_BE.Controllers {
                     Id = id,
                     Name = updateJourney.Name,
                     Description = updateJourney.Description,
-                    StartDate = updateJourney.StartDate.ToDateTime(TimeOnly.Parse("00:00 AM")),
-                    EndDate = (DateTime)(updateJourney.EndDate?.ToDateTime(TimeOnly.Parse("00:00 AM"))),
+                    StartDate = updateJourney.StartDate == null ? null : updateJourney.StartDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
+                    EndDate = updateJourney.EndDate == null ? null : updateJourney.EndDate?.ToDateTime(TimeOnly.Parse("00:00 AM")),
                     DurationDay = updateJourney.DurationDay,
                     DurationNight = updateJourney.DurationNight,
                     Amount = updateJourney.Amount,
