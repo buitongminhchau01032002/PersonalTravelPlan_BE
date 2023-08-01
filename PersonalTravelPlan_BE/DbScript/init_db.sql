@@ -108,3 +108,15 @@ VALUES
 (2, 5), (2, 6); -- New York City, San Francisco
 
 
+-- USER
+CREATE TABLE [dbo].[User](
+	[Id] INT NOT NULL IDENTITY(1, 1),
+	[Username] NVARCHAR(100) NOT NULL,
+	[Password] NVARCHAR(100) NOT NULL,
+	PRIMARY KEY (Id)
+);
+
+SET IDENTITY_INSERT [User] ON;
+INSERT INTO [User]([Id],  [Username], [Password])
+VALUES (1, 'mc', '111111'), (2, 'minhchau', '111111')
+SET IDENTITY_INSERT [User] OFF;

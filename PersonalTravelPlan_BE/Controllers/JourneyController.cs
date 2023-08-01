@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
 using PersonalTravelPlan_BE.Dtos;
 using PersonalTravelPlan_BE.Models;
 using PersonalTravelPlan_BE.Queries;
@@ -10,6 +11,7 @@ using PersonalTravelPlan_BE.Utils;
 namespace PersonalTravelPlan_BE.Controllers {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class JourneyController : ControllerBase {
 
         private readonly IJourneyRepository _journeyRepository;
