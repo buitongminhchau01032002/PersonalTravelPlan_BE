@@ -1,6 +1,6 @@
 USE PersonalTravelPlan
 -- DROP
-DROP TABLE IF EXISTS JourneyPlace, Journey, Place, Country, Currency;
+DROP TABLE IF EXISTS JourneyPlace, Journey, Place, Country, Currency, [User];
 
 -- CURRENCY
 CREATE TABLE [dbo].[Currency] (
@@ -58,12 +58,13 @@ CREATE TABLE [dbo].[Journey] (
 	[ImageUrl] NVARCHAR(500),
 	[CountryId] INT NOT NULL,
 	[CurrencyId] INT,
+	[Image] VARBINARY(MAX),
 	PRIMARY KEY (Id)
 )
 ALTER TABLE Place ADD FOREIGN KEY ([CountryId]) REFERENCES Country([Id]);
 
 SET IDENTITY_INSERT Journey ON;
-INSERT INTO Journey([Id], [Name], [Description], [StartDate], [EndDate], [DurationDay], [DurationNight], [Amount], [Status], [ImageUrl], [CountryId], [CurrencyId])
+INSERT INTO Journey([Id], [Name], [Description], [StartDate], [EndDate], [DurationDay], [DurationNight], [Amount], [Status], [ImageUrl], [CountryId], [CurrencyId], [Image])
 VALUES
 (	1,
 	'Personalized Ha Noi Adventure: A Journey of Discovery',
@@ -76,7 +77,8 @@ VALUES
 	'Finished',
 	NULL,
 	1,
-	1
+	1,
+	NULL
 ),
 (	2,
 	'Exploring New York City and San Francisco',
@@ -89,7 +91,36 @@ VALUES
 	'Planning',
 	NULL,
 	3,
-	2
+	2,
+	NULL
+),
+(	3,
+	'Personalized Ha Noi Adventure: A Journey of Discovery',
+	'Take a leisurely stroll around Hoan Kiem Lake to get acquainted with the city charm. Explore the Temple of Literature, known for its historical significance and beautiful architecture.',
+	'2023-1-12',
+	'2023-1-13',
+	2,
+	1,
+	10000000,
+	'Finished',
+	NULL,
+	1,
+	1,
+	NULL
+),
+(	4,
+	'Personalized Ha Noi Adventure: A Journey of Discovery',
+	'Take a leisurely stroll around Hoan Kiem Lake to get acquainted with the city charm. Explore the Temple of Literature, known for its historical significance and beautiful architecture.',
+	'2023-1-12',
+	'2023-1-13',
+	2,
+	1,
+	10000000,
+	'Finished',
+	NULL,
+	1,
+	1,
+	NULL
 );
 SET IDENTITY_INSERT Journey OFF;
 
@@ -120,3 +151,14 @@ SET IDENTITY_INSERT [User] ON;
 INSERT INTO [User]([Id],  [Username], [Password])
 VALUES (1, 'mc', '111111'), (2, 'minhchau', '111111')
 SET IDENTITY_INSERT [User] OFF;
+
+
+
+-- OPTIONAL CREATE JOURNEY WITH IMAGE
+
+SET IDENTITY_INSERT Journey ON;
+INSERT INTO Journey([Id], [Name], [Description], [StartDate], [Status], [CountryId], [Image])
+SELECT 5, 'vxbdfgsdgsfd g', 'gsdfgsdfg', '2023-1-12', 'Planning', 1, BulkColumn FROM OPENROWSET (Bulk 'C:\Users\BUIC\Desktop\image\76-367x267.jpg', SINGLE_BLOB) AS [Image];
+SET IDENTITY_INSERT Journey OFF;
+
+SELECT * FROM Journey;

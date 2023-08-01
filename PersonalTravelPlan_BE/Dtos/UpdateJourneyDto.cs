@@ -21,6 +21,7 @@ namespace PersonalTravelPlan_BE.Dtos {
         [Required]
         public int? CountryId { get; set; }
         public int? CurrencyId { get; set; }
+        public byte[]? Image { get; set; }
         public IList<int>? PlaceIds { get; set; } = new List<int>();
     }
 }

@@ -15,6 +15,7 @@ namespace PersonalTravelPlan_BE.Models {
         public virtual string? ImageUrl { get; set; }
         public virtual Country? Country { get; set; }
         public virtual Currency? Currency { get; set; }
+        public virtual byte[]? Image { get; set; }
         public virtual ISet<Place>? Places { get; set; } = new HashSet<Place>();
     }
 
@@ -32,6 +33,7 @@ namespace PersonalTravelPlan_BE.Models {
             Property(x => x.Amount);
             Property(x => x.Status);
             Property(x => x.ImageUrl);
+            Property(x => x.Image);
             ManyToOne(x => x.Country, map => {
                 map.Column("CountryId");
                 map.NotNullable(true);

@@ -15,6 +15,7 @@ namespace PersonalTravelPlan_BE.Utils {
                 Amount = journey.Amount,
                 Status = journey.Status,
                 ImageUrl = journey.ImageUrl,
+                Image = journey.Image,
                 Country = new CountryInJourneyDto() {
                     Id = journey.Country.Id,
                     Name = journey.Country.Name,

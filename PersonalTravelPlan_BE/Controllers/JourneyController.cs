@@ -11,7 +11,7 @@ using PersonalTravelPlan_BE.Utils;
 namespace PersonalTravelPlan_BE.Controllers {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize]
+    //[Authorize]
     public class JourneyController : ControllerBase {
 
         private readonly IJourneyRepository _journeyRepository;
@@ -143,6 +143,7 @@ namespace PersonalTravelPlan_BE.Controllers {
                     ImageUrl = createJourney.ImageUrl,
                     Country = country,
                     Currency = currency,
+                    Image = createJourney.Image,
                     Places = places == null ? null : new HashSet<Place>(places)
                 };
 
@@ -222,6 +223,7 @@ namespace PersonalTravelPlan_BE.Controllers {
                     ImageUrl = updateJourney.ImageUrl,
                     Country = country,
                     Currency = currency,
+                    Image = updateJourney.Image,
                     Places = places == null ? null : new HashSet<Place>(places)
                 };
 
