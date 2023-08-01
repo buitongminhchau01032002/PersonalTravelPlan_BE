@@ -13,7 +13,7 @@ builder.Services.AddCors(options => {
         policy => {
             policy.WithOrigins("*")
                   .WithMethods("GET", "POST", "PUT", "DELETE")
-                  .WithHeaders(HeaderNames.ContentType, HeaderNames.Accept);
+                  .WithHeaders(HeaderNames.ContentType, HeaderNames.Accept, HeaderNames.Authorization);
         });
 });
 builder.Services.AddSingleton<ICurrencyRepository, CurrencyRepository>();
